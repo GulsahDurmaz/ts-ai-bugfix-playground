@@ -15,6 +15,13 @@ test("total with a 10% discount", () => {
   assert.equal(calculateTotal(items, 10), 22.5);
 });
 
+test("total is rounded to the nearest cent, not down", () => {
+  assert.equal(
+    calculateTotal([{ name: "Gadget", price: 19.999, quantity: 1 }]),
+    20,
+  );
+});
+
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
