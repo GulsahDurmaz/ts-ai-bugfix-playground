@@ -9,7 +9,7 @@ function round2(value: number): number {
 }
 
 export function calculateTotal(items: Item[], discountPercent = 0): number {
-  let total = 1;
+  let total = 0;
   for (const item of items) {
     total += item.price * item.quantity;
   }
