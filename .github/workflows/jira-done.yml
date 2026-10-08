@@ -1,54 +1,37 @@
-name: AI Fix
+name: Notify Jira on merge
 
 on:
-  workflow_dispatch:
-    inputs:
-      issue_key:
-        description: "Jira issue key (e.g. KAN-2)"
-        required: true
-        type: string
-      summary:
-        description: "Jira issue summary"
-        required: true
-        type: string
+  pull_request:
+    types: [closed]
+    branches: [main]
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  id-token: write
+  contents: read
 
 jobs:
-  ai-fix:
+  notify-jira:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'fix/')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run Claude
-        uses: anthropics/claude-code-action@v1
+      - name: Send merge info to Jira
         env:
-          GH_TOKEN: ${{ github.token }}
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Jira ticket ${{ inputs.issue_key }}: "${{ inputs.summary }}"
-
-            1. Find the root cause of this bug in the code.
-            2. Fix it with a minimal change.
-            3. Add or update a regression test.
-            4. Run `npx tsc --noEmit` and `npm test`. Both must pass.
-            5. Create a branch `fix/${{ inputs.issue_key }}`, commit, and push it.
-            6. Open a pull request to `main` with `gh pr create`. Mention ${{ inputs.issue_key }} in the title.
-            7. Enable auto-merge with `gh pr merge --auto --merge`.
-            Do not merge manually.
-          claude_args: |
-            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(npx:*)"
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          JIRA_WEBHOOK_URL: ${{ secrets.JIRA_WEBHOOK_URL }}
+          JIRA_WEBHOOK_SECRET: ${{ secrets.JIRA_WEBHOOK_SECRET }}
+        run: |
+          ISSUE_KEY="${BRANCH#fix/}"
+          if ! [[ "$ISSUE_KEY" =~ ^[A-Z][A-Z0-9]+-[0-9]+$ ]]; then
+            echo "Branch '$BRANCH' does not contain a valid Jira key. Skipping."
+            exit 0
+          fi
+          PAYLOAD=$(jq -n \
+            --arg key "$ISSUE_KEY" \
+            --arg url "$PR_URL" \
+            --arg title "$PR_TITLE" \
+            '{issues: [$key], pr_url: $url, pr_title: $title}')
+          curl --fail-with-body -sS -X POST "$JIRA_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Automation-Webhook-Token: $JIRA_WEBHOOK_SECRET" \
+            -d "$PAYLOAD"
