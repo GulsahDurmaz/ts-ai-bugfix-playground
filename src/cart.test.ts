@@ -18,3 +18,9 @@ test("total with a 10% discount", () => {
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
+
+test("total rounds to nearest cent, not down (KAN-3 regression)", () => {
+  // 3 items at $1.115 each = $3.345, should round to $3.35 (nearest), not $3.34 (floor)
+  const items: Item[] = [{ name: "Widget", price: 1.115, quantity: 3 }];
+  assert.equal(calculateTotal(items), 3.35);
+});
