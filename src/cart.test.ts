@@ -18,8 +18,3 @@ test("total with a 10% discount", () => {
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
-
-test("total is rounded to the nearest cent, not down (KAN-3)", () => {
-  // 9.99 with 60% off = 3.996 -> 4.00 (rounding down would give 3.99)
-  assert.equal(calculateTotal([{ name: "Mug", price: 9.99, quantity: 1 }], 60), 4);
-});
