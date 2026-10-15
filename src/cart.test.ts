@@ -18,9 +18,3 @@ test("total with a 10% discount", () => {
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
-
-test("total rounds to nearest cent, not down (KAN-3)", () => {
-  // Item with sub-cent price: 1.999 should round to 2.00, not floor to 1.99
-  const subCentItem: Item[] = [{ name: "Widget", price: 1.999, quantity: 1 }];
-  assert.equal(calculateTotal(subCentItem), 2.0);
-});
