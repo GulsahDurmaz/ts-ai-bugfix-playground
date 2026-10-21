@@ -13,3 +13,10 @@ test("calculateTotal respects quantity greater than 1", () => {
   ];
   assert.equal(calculateTotal(items), 25);
 });
+
+test("round2 rounds 19.999 to 20.00", () => {
+  const items = [
+    { name: "item", price: 19.999, quantity: 1 }
+  ];
+  assert.equal(calculateTotal(items), 20.00);
+});
