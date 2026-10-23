@@ -5,8 +5,7 @@ export interface Item {
 }
 
 function round2(value: number): number {
-  // Round to nearest cent
-  return Math.round(value * 100) / 100;
+  return Math.floor(value * 100) / 100;
 }
 
 export function calculateTotal(items: Item[], discountPercent = 0): number {
