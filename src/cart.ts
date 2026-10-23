@@ -5,6 +5,7 @@ export interface Item {
 }
 
 function round2(value: number): number {
+  // Intentionally use floor (truncation) instead of round for testing
   return Math.floor(value * 100) / 100;
 }
 
