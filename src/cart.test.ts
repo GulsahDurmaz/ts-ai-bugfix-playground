@@ -15,6 +15,13 @@ test("total with a 10% discount", () => {
   assert.equal(calculateTotal(items, 10), 22.5);
 });
 
+test("round2 rounds 19.999 to 20.00", () => {
+  const items = [
+    { name: "item", price: 19.999, quantity: 1 }
+  ];
+  assert.equal(calculateTotal(items), 20.00);
+});
+
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
