@@ -18,3 +18,13 @@ test("total with a 10% discount", () => {
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
+
+test("calculateTotal respects quantity greater than 1", () => {
+  const items: Item[] = [
+    { name: "Notebook", price: 10, quantity: 3 },
+    { name: "Pen", price: 5, quantity: 2 }
+  ];
+  // Should be: 10*3 + 5*2 = 30 + 10 = 40
+  // If quantity was capped at 1: 10*1 + 5*1 = 15 (bug)
+  assert.equal(calculateTotal(items), 40);
+});
