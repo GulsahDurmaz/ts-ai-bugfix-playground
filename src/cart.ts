@@ -5,7 +5,8 @@ export interface Item {
 }
 
 function round2(value: number): number {
-  return Math.round(value * 100) / 100;
+  // Intentionally use floor (truncation) instead of round for testing
+  return Math.floor(value * 100) / 100;
 }
 
 export function calculateTotal(items: Item[], discountPercent = 0): number {
