@@ -18,3 +18,9 @@ test("total with a 10% discount", () => {
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
+
+test("rounds to nearest cent for edge case", () => {
+  // Test case: 19.999 should round to 20.00, not 19.99
+  const edgeCaseItems: Item[] = [{ name: "Item", price: 19.999, quantity: 1 }];
+  assert.equal(calculateTotal(edgeCaseItems), 20);
+});
