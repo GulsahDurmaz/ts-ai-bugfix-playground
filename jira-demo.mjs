@@ -1,4 +1,5 @@
 import readline from "node:readline/promises";
+import "dotenv/config";
 
 const BASE = process.env.JIRA_BASE_URL ?? "https://zahidegulsahdurmaz.atlassian.net";
 const EMAIL = process.env.JIRA_EMAIL;

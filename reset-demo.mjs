@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import "dotenv/config";
 
 const REPO = ".";
 const SOURCE = process.argv[2] ?? "buggy-start";
