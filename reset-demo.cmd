@@ -1,3 +1,2 @@
 @echo off
-cd /d "%~dp0"
-node --disable-warning=DEP0190 reset-demo.mjs
+node "%~dp0reset-demo.mjs" buggy-start

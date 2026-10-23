@@ -1,7 +1,12 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 
 const REPO = ".";
+const SOURCE = process.argv[2] ?? "buggy-start";
+if (!/^[A-Za-z0-9._-]+$/.test(SOURCE)) {
+  console.error("Invalid branch name:", SOURCE);
+  process.exit(1);
+}
+
 const win = process.platform === "win32";
 const q = (s) => (win ? `"${s}"` : s);
 const run = (cmd, args) =>
@@ -14,22 +19,23 @@ run("git", ["fetch", "origin"]);
 run("git", ["checkout", "main"]);
 run("git", ["reset", "--hard", "origin/main"]);
 run("git", ["checkout", "-b", branch]);
-// Remove everything in src first, so files added by agents are deleted too,
-// then restore src exactly as it is on buggy-start.
+// Delete src first so files added by agents are removed too,
+// then restore src exactly as it is on the source branch.
 run("git", ["rm", "-r", "-q", "src"]);
-run("git", ["checkout", "origin/buggy-start", "--", "src"]);
+run("git", ["checkout", `origin/${SOURCE}`, "--", "src"]);
 
 if (run("git", ["status", "--porcelain"]).length === 0) {
   run("git", ["checkout", "main"]);
   run("git", ["branch", "-D", branch]);
-  console.log("main is already in the buggy state. Nothing to do.");
+  console.log(`main already matches ${SOURCE}. Nothing to do.`);
   process.exit(0);
 }
 
-run("git", ["commit", "-m", q("Reset demo bugs")]);
+run("git", ["commit", "-m", q(`Reset demo to ${SOURCE}`)]);
 run("git", ["push", "-u", "origin", branch]);
 const url = run("gh", ["pr", "create", "--base", "main", "--head", branch,
-  "--title", q("Reset demo bugs"), "--body", q("Restore the quantity and rounding bugs for the next test run.")]);
+  "--title", q(`Reset demo to ${SOURCE}`),
+  "--body", q(`Restore src to the state of ${SOURCE} for the next test run.`)]);
 console.log("PR:", url);
 run("gh", ["pr", "merge", branch, "--auto", "--merge"]);
 
@@ -42,7 +48,7 @@ for (let i = 0; i < 36; i++) {
 
 run("git", ["checkout", "main"]);
 run("git", ["pull"]);
-const cart = readFileSync(`${REPO}/src/cart.ts`, "utf8");
-const buggy =
-  cart.includes("Math.min(item.quantity, 1)") && cart.includes("Math.floor(value * 100)");
-console.log(buggy ? "Done: both bugs restored on main." : "Not merged yet or bugs missing. Check the PR.");
+const diff = run("git", ["diff", "--stat", "HEAD", `origin/${SOURCE}`, "--", "src"]);
+console.log(diff.length === 0
+  ? `Done: main src matches ${SOURCE}.`
+  : "Not merged yet or src differs from " + SOURCE + ". Check the PR.");
