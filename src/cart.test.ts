@@ -18,3 +18,11 @@ test("total with a 10% discount", () => {
 test("empty cart is zero", () => {
   assert.equal(calculateTotal([]), 0);
 });
+
+test("rounds to nearest cent", () => {
+  // Test case for 19.999 which should round to 20.00
+  const items: Item[] = [
+    { name: "Item", price: 19.999, quantity: 1 },
+  ];
+  assert.equal(calculateTotal(items), 20.00);
+});
