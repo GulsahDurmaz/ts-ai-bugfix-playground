@@ -9,3 +9,7 @@ test("average of two numbers", () => {
 test("average of one number", () => {
   assert.equal(average([5]), 5);
 });
+
+test("average of an empty list", () => {
+  assert.equal(average([]), 0);
+});
