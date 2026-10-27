@@ -43,6 +43,12 @@ const CARDS = {
       text: "When calculating statistics for an empty dataset, the average displays as 'NaN' instead of a valid number.\n\nExample: A report with no sales data shows 'NaN' for average sale value.\n\nAcceptance: The average of an empty list returns 0.",
     },
   ],
+  "buggy-start3": [
+    {
+      summary: "Cart total rounds down instead of to the nearest cent",
+      text: "The cart total always rounds down to the cent instead of rounding to the nearest cent.\n\nExample: One item at 10 EUR with a 33% discount should total 6.70 EUR, but the total shows 6.69 EUR.\n\nAcceptance: Discounted totals are rounded to the nearest cent.",
+    },
+  ],
 };
 const cards = CARDS[SOURCE] ?? [];
 
