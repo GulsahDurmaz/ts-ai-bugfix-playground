@@ -21,26 +21,26 @@ const LABELS = ["cascade-auto"];
 const CARDS = {
   "buggy-start": [
     {
-      summary: "Fix calculateTotal quantity handling",
-      text: "In src/cart.ts, calculateTotal counts every quantity above 1 as 1.\nReproduction: 2 notebooks (10 EUR each) and 1 pen (5 EUR). Expected total: 25 EUR. Actual total: 15 EUR.\nFix the loop to use the actual item.quantity, add a test, and make npm test pass. Only change the quantity handling.",
+      summary: "Cart total ignores quantities above 1",
+      text: "When an item is added to the cart more than once, only one unit is counted in the total.\n\nExample: 2 notebooks at 10 EUR each and 1 pen at 5 EUR should total 25 EUR, but the total shows 15 EUR.\n\nAcceptance: Adding multiple quantities of an item calculates the correct total.",
     },
     {
-      summary: "Fix calculateTotal rounding to the nearest cent",
-      text: "In src/cart.ts, round2 rounds down instead of to the nearest cent.\nReproduction: one item at 10 EUR with a 33% discount. Expected total: 6.7 EUR. Actual total: 6.69 EUR.\nFix round2, add a test, and make npm test pass. Only change the rounding.",
+      summary: "Cart total rounds down instead of to the nearest cent",
+      text: "The cart total always rounds down to the cent instead of rounding to the nearest cent.\n\nExample: One item at 10 EUR with a 33% discount should total 6.70 EUR, but the total shows 6.69 EUR.\n\nAcceptance: Discounted totals are rounded to the nearest cent.",
     },
   ],
   "buggy-start2": [
     {
-      summary: "Fix calculateTotal quantity handling",
-      text: "In src/cart.ts, calculateTotal counts every quantity above 1 as 1.\nReproduction: 2 notebooks (10 EUR each) and 1 pen (5 EUR). Expected total: 25 EUR. Actual total: 15 EUR.\nFix the loop to use the actual item.quantity, add a test, and make npm test pass. Only change src/cart.ts and its test.",
+      summary: "Cart total ignores quantities above 1",
+      text: "When an item is added to the cart more than once, only one unit is counted in the total.\n\nExample: 2 notebooks at 10 EUR each and 1 pen at 5 EUR should total 25 EUR, but the total shows 15 EUR.\n\nAcceptance: Adding multiple quantities of an item calculates the correct total.",
     },
     {
-      summary: "Fix free shipping threshold",
-      text: "In src/shipping.ts, isFreeShipping(50) returns false but orders of 50 or more ship for free.\nExpected: isFreeShipping(50) is true.\nFix the comparison, add a test, and make npm test pass. Only change src/shipping.ts and its test.",
+      summary: "Orders of exactly 50 EUR do not ship for free",
+      text: "Orders of 50 EUR or more should ship for free, but an order of exactly 50 EUR is still charged for shipping.\n\nExample: A customer with a 50 EUR order expects free shipping but sees a shipping fee.\n\nAcceptance: Orders of exactly 50 EUR qualify for free shipping.",
     },
     {
-      summary: "Fix average of an empty list",
-      text: "In src/stats.ts, average([]) returns NaN. It should return 0 for an empty list.\nFix it, add a test, and make npm test pass. Only change src/stats.ts and its test.",
+      summary: "Average of an empty list shows an error",
+      text: "When calculating statistics for an empty dataset, the average displays as 'NaN' instead of a valid number.\n\nExample: A report with no sales data shows 'NaN' for average sale value.\n\nAcceptance: The average of an empty list returns 0.",
     },
   ],
 };
