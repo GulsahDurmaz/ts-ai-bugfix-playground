@@ -5,13 +5,13 @@ export interface Item {
 }
 
 function round2(value: number): number {
-  return Math.round(value * 100) / 100;
+  return Math.floor(value * 100) / 100;
 }
 
 export function calculateTotal(items: Item[], discountPercent = 0): number {
   let total = 0;
   for (const item of items) {
-    total += item.price * item.quantity;
+    total += item.price * Math.min(item.quantity, 1);
   }
   return round2(total * (1 - discountPercent / 100));
 }
