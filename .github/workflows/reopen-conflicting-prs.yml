@@ -1,0 +1,31 @@
+name: Reopen conflicting PRs
+on:
+  push:
+    branches: [main]
+permissions:
+  pull-requests: write
+  contents: read
+jobs:
+  reopen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find and reopen conflicting PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          sleep 20
+          for pr in $(gh pr list --repo "$REPO" --base main --state open --json number --jq '.[].number'); do
+            state=""
+            for i in 1 2 3 4 5 6; do
+              state=$(gh pr view "$pr" --repo "$REPO" --json mergeable --jq '.mergeable')
+              [ "$state" != "UNKNOWN" ] && break
+              sleep 5
+            done
+            echo "PR #$pr mergeable=$state"
+            if [ "$state" = "CONFLICTING" ]; then
+              gh pr close "$pr" --repo "$REPO"
+              sleep 5
+              gh pr reopen "$pr" --repo "$REPO"
+            fi
+          done
