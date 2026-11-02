@@ -44,3 +44,8 @@ test("multiple items with multiple quantities", () => {
   ];
   assert.equal(calculateTotal(items), 35);
 });
+
+test("single item at 10 EUR with 33% discount should round to 6.70 EUR", () => {
+  const items: Item[] = [{ name: "Item", price: 10, quantity: 1 }];
+  assert.equal(calculateTotal(items, 33), 6.7);
+});
