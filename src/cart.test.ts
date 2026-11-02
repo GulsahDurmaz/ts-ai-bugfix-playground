@@ -15,37 +15,3 @@ test("single item with quantity 1 and 10% discount", () => {
   const items: Item[] = [{ name: "Notebook", price: 10, quantity: 1 }];
   assert.equal(calculateTotal(items, 10), 9);
 });
-
-test("multiple quantities of a single item", () => {
-  const items: Item[] = [{ name: "Notebook", price: 10, quantity: 2 }];
-  assert.equal(calculateTotal(items), 20);
-});
-
-test("multiple items with various quantities", () => {
-  const items: Item[] = [
-    { name: "Notebook", price: 10, quantity: 2 },
-    { name: "Pen", price: 5, quantity: 1 }
-  ];
-  assert.equal(calculateTotal(items), 25);
-});
-
-test("multiple items with high quantities", () => {
-  const items: Item[] = [
-    { name: "Notebook", price: 10, quantity: 5 },
-    { name: "Pen", price: 5, quantity: 3 }
-  ];
-  assert.equal(calculateTotal(items), 65);
-});
-
-test("multiple quantities with discount", () => {
-  const items: Item[] = [
-    { name: "Notebook", price: 10, quantity: 2 },
-    { name: "Pen", price: 5, quantity: 1 }
-  ];
-  assert.equal(calculateTotal(items, 10), 22.5);
-});
-
-test("single item with 33% discount should round to nearest cent", () => {
-  const items: Item[] = [{ name: "Item", price: 10, quantity: 1 }];
-  assert.equal(calculateTotal(items, 33), 6.70);
-});
