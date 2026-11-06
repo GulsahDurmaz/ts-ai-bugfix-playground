@@ -5,14 +5,19 @@ export interface Item {
 }
 
 /**
- * Truncates a monetary value to two decimals.
+ * Rounds a monetary value to the nearest cent (half away from zero).
  *
- * A small epsilon is added before truncating so that binary floating-point
- * artifacts (e.g. `10.1 * 3 === 30.299999999999997`) are not truncated down
- * to the wrong cent.
+ * The scaled value is first normalised with `toPrecision` so that binary
+ * floating-point artifacts (e.g. `10 * (1 - 33 / 100) === 6.699999999999999`
+ * or `10.1 * 3 === 30.299999999999997`) cannot push a value across a rounding
+ * boundary and cause an off-by-one-cent result.
  */
 function round2(value: number): number {
-  return Math.floor(value * 100 + 1e-9) / 100;
+  if (!Number.isFinite(value)) {
+    return value;
+  }
+  const cents = Number((value * 100).toPrecision(12));
+  return (Math.sign(cents) * Math.round(Math.abs(cents))) / 100;
 }
 
 /**
@@ -20,11 +25,11 @@ function round2(value: number): number {
  *
  * Each item contributes `price * quantity`, so adding multiple units of the
  * same item is counted in full. The optional discount is applied to the cart
- * total and the result is truncated to two decimals.
+ * total and the result is rounded to the nearest cent.
  *
  * @param items - Cart items, each with a price and a quantity.
  * @param discountPercent - Percentage discount applied to the cart total.
- * @returns The cart total, truncated to two decimals.
+ * @returns The cart total, rounded to the nearest cent.
  */
 export function calculateTotal(items: Item[], discountPercent = 0): number {
   let total = 0;
