@@ -12,7 +12,7 @@ This repo is a safe sandbox for testing whether an AI assistant can take a Jira 
 
 `src/cart.ts` contains a small shopping cart helper:
 
-- `calculateTotal(items, discountPercent?)` returns the total price of a cart, with an optional percentage discount.
+- `calculateTotal(items, discountPercent?)` returns the total price of a cart, with an optional percentage discount. The result is rounded to the nearest cent (half away from zero).
 
 ## Getting started
 
