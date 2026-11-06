@@ -29,8 +29,17 @@ test("discounted total rounds down when below the half cent", () => {
 
 test("discounted total rounds half a cent up", () => {
   const items: Item[] = [{ name: "Sticker", price: 0.15, quantity: 1 }];
-  // 0.15 * 0.9 = 0.135 -> 0.14
+  // 0.15 * (1 - 10 / 100) * 100 === 13.5 exactly, so this is the half-cent
+  // boundary with no floating-point drift involved.
   assert.equal(calculateTotal(items, 10), 0.14);
+});
+
+test("half a cent that drifts below the boundary still rounds up", () => {
+  const items: Item[] = [{ name: "Eraser", price: 0.3, quantity: 1 }];
+  // Guards the scaled-value normalisation in round2(): the exact result is
+  // 0.285, but 0.3 * (1 - 5 / 100) * 100 evaluates to 28.499999999999996, so
+  // a naive Math.round(value * 100) / 100 would return 0.28 here.
+  assert.equal(calculateTotal(items, 5), 0.29);
 });
 
 test("multiple items with a discount are rounded to the nearest cent", () => {

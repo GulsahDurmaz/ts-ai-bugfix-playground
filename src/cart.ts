@@ -7,13 +7,16 @@ export interface Item {
 /**
  * Rounds a monetary value to the nearest cent, with half a cent rounding up.
  *
- * The value is scaled before rounding so that binary floating-point
- * representation errors (e.g. `10 * 0.67 === 6.700000000000001`) do not push
- * a result onto the wrong side of the half-cent boundary.
+ * The scaled value is normalised before rounding, because binary
+ * floating-point error can drift a mathematically exact half cent just below
+ * the boundary and make `Math.round` pick the lower cent. A 5% discount on
+ * 0.30 is the canonical case: `0.3 * (1 - 5 / 100) * 100` evaluates to
+ * `28.499999999999996`, which plain `Math.round` collapses to `0.28` instead
+ * of the expected `0.29`.
  */
 function round2(value: number): number {
-  // Trim the binary drift that the scaling introduces (e.g. 10 * 0.67 * 100
-  // === 670.0000000000001) before rounding to the nearest whole cent.
+  // Snap off the sub-cent drift (e.g. 28.499999999999996 -> 28.5) so that
+  // exact half cents round up rather than down.
   const scaledCents = Number((value * 100).toFixed(6));
   return Math.round(scaledCents) / 100;
 }
