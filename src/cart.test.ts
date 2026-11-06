@@ -23,3 +23,8 @@ test("multiple items with quantities greater than 1", () => {
   ];
   assert.equal(calculateTotal(items), 25);
 });
+
+test("single item with quantity 1 and 33% discount rounds to nearest cent", () => {
+  const items: Item[] = [{ name: "Item", price: 10, quantity: 1 }];
+  assert.equal(calculateTotal(items, 33), 6.70);
+});
